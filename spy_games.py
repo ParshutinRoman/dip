@@ -1,5 +1,6 @@
 from pprint import pprint
 import requests
+import time
 from urllib.parse import urlencode
 
 # APP_ID = 5030613
@@ -44,26 +45,31 @@ class User():
 
         return (self.friends)
 
-
     def gruppa_incognita(self):
         user1.group_list()
         user1.friends_list()
-        asd = []
-        #print(self.groups)
-        print(self.friends)
+        self.asd = []
+        # print(self.groups)
+        # print(self.friends)
 
         for group in self.groups:
+
+            group = group['id']
             for user in self.friends:
+                time.sleep(0.3)
                 params = {
                     'v': VERSION,
                     'user_id': user,
                     'access_token': TOKEN,
-                    'group_id': group['id']
+                    'group_id': group
                 }
                 response = requests.get('https://api.vk.com/method/groups.isMember', params)
-                asd.append({group['id']: response.json()['response']})
+                #response = response.json()
+                self.asd.append({group: response.json()['response']})
 
-        return (asd)
+
+
+        return (self.asd)
 
 
 
