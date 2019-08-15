@@ -9,37 +9,76 @@ USER_ID = 171691064
 TOKEN = '73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1'
 VERSION = '5.101'
 
+#https://api.vk.com/method/groups.get?user_id=171691064&access_token=73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1&v=5.101
+
 class User():
     def __init__(self, USER_ID):
         self.userid = USER_ID
-        self.response = {}
-
+       # self.response = {}
 
     def group_list(self):
-        self.response = []
+        #self.response = []
+        self.groups = []
         params = {
             'v': VERSION,
-            'user_id': USER_ID
+            'user_id': USER_ID,
+            'access_token': TOKEN,
+            'extended': 1,
+            'fields': 'members_count'
         }
         response = requests.get('https://api.vk.com/method/groups.get', params)
-        response = response.json()['response']
-        self.response = response.get('items')
-        return(response)
+        response = response.json()['response']['items']
+        for i in response:
+            self.groups.append({'id': i['id'], 'name': i['name'], 'members_count': i['members_count']})
 
-    def __str__(self):
-        for id in self.response:
-            print("id общего друга " + str(id))
+        return(self.groups)
 
-    # def __str__(self):
-    #     print(self.response)
-    # #print(response)
+    def friends_list(self):
+        params = {
+            'v': VERSION,
+            'user_id': USER_ID,
+            'access_token': TOKEN,
+        }
+        response = requests.get('https://api.vk.com/method/friends.get', params)
+        self.friends = response.json()['response']['items']
+
+        return (self.friends)
+
+
+    def gruppa_incognita(self):
+        user1.group_list()
+        user1.friends_list()
+        asd = []
+        #print(self.groups)
+        print(self.friends)
+
+        for group in self.groups:
+            for user in self.friends:
+                params = {
+                    'v': VERSION,
+                    'user_id': user,
+                    'access_token': TOKEN,
+                    'group_id': group['id']
+                }
+                response = requests.get('https://api.vk.com/method/groups.isMember', params)
+                asd.append({group['id']: response.json()['response']})
+
+        return (asd)
+
+
+
+
+
 
 user1 = User(USER_ID)
-print(user1)
+print(user1.gruppa_incognita())
+
 
 # friends.get
 #
 # groups.get
+#
+# groups.isMember
 #
 # users.search
 #
