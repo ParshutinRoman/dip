@@ -1,24 +1,16 @@
-from pprint import pprint
 import requests
 import time
-from urllib.parse import urlencode
 
-# APP_ID = 5030613
-#AUTHORIZE_URL = 'https://oauth.vk.com/authorize'
 USER_NAME = 'eshmargunov'
 USER_ID = 171691064
 TOKEN = '73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1'
 VERSION = '5.101'
 
-#https://api.vk.com/method/groups.get?user_id=171691064&access_token=73eaea320bdc0d3299faa475c196cfea1c4df9da4c6d291633f9fe8f83c08c4de2a3abf89fbc3ed8a44e1&v=5.101
-
 class User():
     def __init__(self, USER_ID):
         self.userid = USER_ID
-       # self.response = {}
 
     def group_list(self):
-        #self.response = []
         self.groups = []
         params = {
             'v': VERSION,
@@ -48,13 +40,11 @@ class User():
     def gruppa_incognita(self):
         user1.group_list()
         user1.friends_list()
-        self.asd = []
-        # print(self.groups)
-        # print(self.friends)
+        self.gi = []
 
         for group in self.groups:
-
             group = group['id']
+            self.gi.append(group)
             for user in self.friends:
                 time.sleep(0.3)
                 params = {
@@ -64,28 +54,10 @@ class User():
                     'group_id': group
                 }
                 response = requests.get('https://api.vk.com/method/groups.isMember', params)
-                #response = response.json()
-                self.asd.append({group: response.json()['response']})
-
-
-
-        return (self.asd)
-
-
-
-
-
+            if response.json()['response'] == '1':
+                self.groups.remove(group)
+                continue
+        return (self.groups)
 
 user1 = User(USER_ID)
 print(user1.gruppa_incognita())
-
-
-# friends.get
-#
-# groups.get
-#
-# groups.isMember
-#
-# users.search
-#
-# friends.search
